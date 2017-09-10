@@ -69,6 +69,7 @@ Material:
     - _DstBlend: 0
     - _FlowIntensityX: 0.25
     - _FlowIntensityY: -0.25
+    - _FlowOffset: -1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

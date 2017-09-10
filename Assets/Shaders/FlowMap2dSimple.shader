@@ -10,6 +10,7 @@ Shader "Custom/FlowMap2dSimple"
         _Speed( "Speed", Range( 0.0, 1.0 ) ) = 0.4
         _FlowIntensityX( "FlowIntensityX", Range( -1.0, 1.0 ) ) = 0.25
         _FlowIntensityY( "FlowIntensityY", Range( -1.0, 1.0 ) ) = 0.25
+        // _FlowOffset( "FlowOffset", Range( -1.0, 1.0 ) ) = -0.5
     }
 
     SubShader
@@ -33,6 +34,7 @@ Shader "Custom/FlowMap2dSimple"
             float     _Speed;
             float     _FlowIntensityX;
             float     _FlowIntensityY;
+            // float     _FlowOffset;
 
             struct VertexInput
             {
@@ -66,12 +68,13 @@ Shader "Custom/FlowMap2dSimple"
                 float flow_scale0   = frac( _Speed * time + offset        );
                 float flow_scale1   = frac( _Speed * time + offset + 0.5f );
 
-                float2 flow_dir     = tex2D( _FlowMap, uv ).rg;
-                flow_dir            = 2.0 * ( flow_dir.xy - float2( 0.5, 0.5 ) );
-                flow_dir.xy        *= float2( _FlowIntensityX, _FlowIntensityY );
+                float2 flow_raw_dir = tex2D( _FlowMap, uv ).rg;
+                flow_raw_dir        = 2.0 * ( flow_raw_dir.xy - float2( 0.5, 0.5 ) );
 
-                float2 flow_uv0     = uv + flow_dir * flow_scale0;
-                float2 flow_uv1     = uv + flow_dir * flow_scale1;
+                float2 flow_dir     = flow_raw_dir * float2( _FlowIntensityX, _FlowIntensityY );
+
+                float2 flow_uv0     = uv + flow_dir * flow_scale0; // + flow_raw_dir * _FlowOffset;
+                float2 flow_uv1     = uv + flow_dir * flow_scale1; // + flow_raw_dir * _FlowOffset;
 
                 float alpha         = abs( 2.0f * ( flow_scale0 - 0.5 ) );
 
