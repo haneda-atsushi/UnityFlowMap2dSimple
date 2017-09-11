@@ -8,8 +8,9 @@ Shader "Custom/FlowMap2dSimple"
 		_FlowMap("FlowMap(RG)", 2D) = "white" {}
         _PhaseMap( "PhaseMap(R)", 2D ) = "black" {}
         _Speed( "Speed", Range( 0.0, 1.0 ) ) = 0.4
-        _FlowIntensityX( "FlowIntensityX", Range( -1.0, 1.0 ) ) = 0.25
-        _FlowIntensityY( "FlowIntensityY", Range( -1.0, 1.0 ) ) = 0.25
+        _FlowIntensity( "FlowIntensity", Range( 0.0, 1.0 ) ) = 0.25
+        _FlowSignX( "FlowSignX", Range( -1.0, 1.0 ) ) = 1.0
+        _FlowSignY( "FlowSignY", Range( -1.0, 1.0 ) ) = -1.0
         // _FlowOffset( "FlowOffset", Range( -1.0, 1.0 ) ) = -0.5
     }
 
@@ -32,8 +33,9 @@ Shader "Custom/FlowMap2dSimple"
             sampler2D _PhaseMap;
 
             float     _Speed;
-            float     _FlowIntensityX;
-            float     _FlowIntensityY;
+            float     _FlowIntensity;
+            float     _FlowSignX;
+            float     _FlowSignY;
             // float     _FlowOffset;
 
             struct VertexInput
@@ -70,11 +72,15 @@ Shader "Custom/FlowMap2dSimple"
 
                 float2 flow_raw_dir = tex2D( _FlowMap, uv ).rg;
                 flow_raw_dir        = 2.0 * ( flow_raw_dir.xy - float2( 0.5, 0.5 ) );
+                flow_raw_dir        *= float2( _FlowSignX, _FlowSignY );
 
-                float2 flow_dir     = flow_raw_dir * float2( _FlowIntensityX, _FlowIntensityY );
+                float2 flow_dir     = flow_raw_dir * _FlowIntensity;
+                // float2 flow_offset  = flow_raw_dir * _FlowOffset;
+                float2 flow_uv0     = uv + flow_dir * flow_scale0;
+                float2 flow_uv1     = uv + flow_dir * flow_scale1;
 
-                float2 flow_uv0     = uv + flow_dir * flow_scale0; // + flow_raw_dir * _FlowOffset;
-                float2 flow_uv1     = uv + flow_dir * flow_scale1; // + flow_raw_dir * _FlowOffset;
+                //float2 flow_uv0     = uv + flow_dir * flow_scale0 + flow_offset;
+                //float2 flow_uv1     = uv + flow_dir * flow_scale1 + flow_offset;
 
                 float alpha         = abs( 2.0f * ( flow_scale0 - 0.5 ) );
 

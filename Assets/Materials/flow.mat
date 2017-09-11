@@ -67,9 +67,12 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _FlowIntensity: 0.25
     - _FlowIntensityX: 0.25
     - _FlowIntensityY: -0.25
-    - _FlowOffset: -1
+    - _FlowOffset: 0
+    - _FlowSignX: 1
+    - _FlowSignY: -1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
